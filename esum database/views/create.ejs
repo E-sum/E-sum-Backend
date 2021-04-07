@@ -1,0 +1,35 @@
+<html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+  <%- include("./partials/nav.ejs") %>
+
+  <div class="create-email content">
+    <form action="/email" method="POST">
+      <label for="title">Email title:</label>
+      <input type="text" id="title" name="title" required>
+      <label for="subject">Email subject:</label>
+      <input type="text" id="subject" name="subject" required>
+      <label for="body">Email body:</label>
+      <textarea id="body" name="body" required></textarea>
+      <button>Submit</button>
+    </form>
+
+    <h2>New thread to analyze? </h2>
+    <p>
+        Upload your Email file below
+
+    <form action="/email" method="POST" enctype="multipart/form-data">
+            <input type="file" name="orgEmail" accept=".txt">
+            <br>
+            <input type="submit" value="Upload">
+    </form>
+    <small>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a> </small>
+    </p>
+
+  </div>
+  
+
+  <%- include("./partials/footer.ejs") %>
+</body>
+</html>

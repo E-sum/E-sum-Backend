@@ -1,0 +1,25 @@
+<html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+  <%- include("./partials/nav.ejs") %>
+
+  <div class="email content">
+    <h2>All emails</h2>
+
+    <% if (email.length > 0) { %>
+      <% email.forEach(email => { %>
+        <a class="single" href="/email/<%= email._id %>">
+          <h3 class="title"><%= email.title %></h3>
+          <p class="subject"><%= email.subject %></p>
+        </a>
+      <% }) %>
+    <% } else { %>
+      <p>There are no emails to display...</p>
+    <% } %>
+    
+  </div>
+
+  <%- include("./partials/footer.ejs") %>
+</body>
+</html>
