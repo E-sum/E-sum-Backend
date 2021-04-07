@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const emailRoutes = require('./routes/emailRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // express server
 const server = express();
@@ -40,6 +41,9 @@ server.get('/FAQ', (req, res) => {
 
 // email routes
 server.use('/email', emailRoutes);
+
+//user routes
+server.use(userRoutes);
 
 // 404 page
 server.use((req, res) => {

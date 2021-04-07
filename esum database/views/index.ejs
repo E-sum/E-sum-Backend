@@ -10,8 +10,8 @@
     <% if (email.length > 0) { %>
       <% email.forEach(email => { %>
         <a class="single" href="/email/<%= email._id %>">
-          <h3 class="title"><%= email.title %></h3>
-          <p class="subject"><%= email.subject %></p>
+          <h3 class="subject"><%= email.subject %></h3>
+          <p class="receipient"><%= email.receipient %></p>
         </a>
       <% }) %>
     <% } else { %>
