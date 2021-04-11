@@ -19,7 +19,7 @@
     <p>
         Upload your Email file below
 
-    <form action="/email" method="POST" enctype="multipart/form-data">
+    <form>
             <input type="file" name="orgEmail" accept=".txt">
             <br>
             <input type="submit" value="Upload">
@@ -28,8 +28,59 @@
     </p>
 
   </div>
-  
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                    $("form").submit(function(e) {
+                        e.preventDefault();
+                        //Don't submit after click, as Ajax will create post request
+                        
+                        var f = $('input[type="file"]')[0].files[0];
+                        //retrieve contents from the uploaded file
+                        const scan = new FileReader();
+                        scan.onload = function () {
+                            let content = scan.result;
+                            esumAnalysis(content);
+                            //onload:when scan is complete, send contents to EA 
+                        }
+                        scan.readAsText(f);
+                        //reads uploaded text file and the results awaits in the onload events
+                        function esumAnalysis(file) {
+                            //1.1, Find all emails in thread
+                            const ePattern = /(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
+                            // the patttern of a email is used for a match. Global tag makes sure exec searches for all instances 
+                           
+                            let match = ePattern.exec(file);
+                            var allEmail = [];
+                            let i = 0;
+                            while (match) {
+                                allEmail[i] = match[1];
+                                i++;
+                                match = ePattern.exec(file);
+                            }
+                            //every time there's a match for an email, add the email onto the array
+                            //2.1, Remove the duplicate emails from the lists
+                            let emails = [];
+                            for (j = 0; j < allEmail.length; j++) {
+                                if (!emails.includes(allEmail[j])) {
+                                    emails.push(allEmail[j]);
+                                }
+                            }
+                            //checking if the current index is not inside the clean array before we push in
+                            //1.2, Version (outlook only chain, Have to create cases for others): Seperate threads into singular threads and determine futher analysis 
+                            // alert("checkpoint "+emails[0]);
+                            //1.3, Find the Admin and create the user profiles with AJAX
+                            //2.1 : Emails. First find creator of the singular email and push into array 
+                            //2.2, Grab the subject line of each thread and push into array.
+                            //2.3, Grab the date of the email thread
+                            //2.4, Grab the body of the email thread
+                            //2.5, Idenitfy if body has a signuartue and delete.
+                            //2.6, Create the AJAX post with the email model in mind for the data section
+                        }
+                    });
+                });
+        </script> 
+        <!--Google's jquery library-->        
   <%- include("./partials/footer.ejs") %>
 </body>
 </html>
