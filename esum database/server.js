@@ -1,8 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const emailRoutes = require('./routes/emailRoutes');
-const userRoutes = require('./routes/userRoutes');
+const bodyParser = require('body-parser')
+
+const PORT = process.env.PORT || 3000;
 
 // express server
 const server = express();
@@ -11,7 +12,7 @@ const server = express();
 const dbURI = "mongodb+srv://testUser:1234@cluster0.4imml.mongodb.net/EsumDB?retryWrites=true&w=majority";
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(result => server.listen(3000))
+  .then(result => server.listen(PORT))
   .catch(err => console.log(err));
 
 // register view engine
@@ -25,27 +26,16 @@ server.use((req, res, next) => {
   res.locals.path = req.path;
   next();
 });
+server.use(bodyParser.json())
 
 // routes
-server.get('/', (req, res) => {
-  res.redirect('/email');
-});
-
-server.get('/about', (req, res) => {
-  res.render('about', { title: 'About' });
-});
-
-server.get('/FAQ', (req, res) => {
-  res.render('FAQ', { title: 'FAQ' });
-});
-
-// email routes
-server.use('/email', emailRoutes);
-
-//user routes
-server.use(userRoutes);
+server.use('/email', require('./routes/emailRoutes'));
+server.use('/user', require('./routes/userRoutes'));
+server.use('/', require('./routes/navRoutes'));
+server.use('/log', require('./routes/logRoutes'));
 
 // 404 page
 server.use((req, res) => {
   res.status(404).render('404', { title: '404' });
 });
+console.log(`Server is running on port ${PORT}.`);
