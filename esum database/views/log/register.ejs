@@ -1,0 +1,55 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<%- include("../partials/head.ejs") %>
+	</head>
+	<body>
+		<h1>ESUM Registration</h1>
+		<form id="reg-form">
+			<label for="email" id="elabel">Email:</label>
+			<input type="text" autocomplete="off" id="userEmail" placeholder="user@albany.edu" required />
+			<br>
+			<label for="password" id="plabel">Password:</label>
+			<input type="password" autocomplete="off" id="password" placeholder="Password" required/>
+			<br>
+			<label for="password" id="clabel">Re-Enter Password:</label>
+			<input type="password" autocomplete="off" id="cpassword" placeholder="Re-Enter Password" required/>
+			<br>
+			<input type="submit" value="Create Account" />
+		</form>
+
+		<script>
+			const form = document.getElementById('reg-form')
+			form.addEventListener('submit', registerUser)
+
+			async function registerUser(event) {
+				event.preventDefault()
+				const userEmail = document.getElementById('userEmail').value
+				const password = document.getElementById('password').value
+				const cpass = document.getElementById('cpassword').value
+
+				const result = await fetch('/log/register', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						userEmail,
+						password,
+						cpass
+					})
+				}).then((res) => res.json())
+
+				if (result.status === 'ok') {
+					// everythign went fine
+					alert('Success')
+					window.location.replace('/log/login')
+				} else {
+					alert(result.error)
+				}
+			}
+		</script>
+	</body>
+</html>
