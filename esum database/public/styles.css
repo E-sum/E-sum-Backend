@@ -5,8 +5,8 @@ body {
     padding: 0 20px;
     font-family: 'Noto Serif', serif;
     max-width: 1200px;
-    /* you can change this to whatever I just got tired looking at bright white  */
-    background-color: antiquewhite;
+    /* made background a nice light blue  */
+    background-color: rgb(158, 191, 223);
 }
     p, h1, h2, h3, a, ul{
       margin: 0;
