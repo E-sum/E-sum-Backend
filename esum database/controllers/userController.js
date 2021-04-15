@@ -1,8 +1,8 @@
 const monUser = require('../models/user');
 
 const user_create = (req, res) => {
-    const userEmail = req.query.userEmail;
-    const password = req.query.password;
+    const userEmail = req.body.userEmail;
+    const password = req.body.password;
 
     const newUser = new monUser({userEmail:userEmail, password:password});
     newUser.save()
