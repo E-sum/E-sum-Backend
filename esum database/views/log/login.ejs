@@ -1,11 +1,9 @@
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Login</title>
+	
 		<%- include("../partials/head.ejs") %>
-	</head>
+	
 	<body>
+		<%- include("../partials/nav.ejs") %>
 		<h1>Login to ESUM</h1>
 		<form id="login">
 			<label for="email" id="elabel">Email:</label>
@@ -53,5 +51,6 @@
 				}
 			}
 		</script>
+		<%- include("../partials/footer.ejs") %>
 	</body>
 </html>
