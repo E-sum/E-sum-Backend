@@ -14,6 +14,11 @@ const emailSchema = new Schema({
     type: String,
     required: true
   },
+  // This allows email threads catered to a certain user because they asked it MUST have their ID associated with it.
+  userId: {
+    type: String,
+    required: true
+  }
 }, { timestamps: true });
 
 const email = mongoose.model('email', emailSchema);
