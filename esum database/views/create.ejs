@@ -69,6 +69,54 @@
                             //checking if the current index is not inside the clean array before we push in
                             //1.2, Version (outlook only chain, Have to create cases for others): Seperate threads into singular threads and determine futher analysis 
                             // alert("checkpoint "+emails[0]);
+                            const eThreads=file.split("From:")
+
+                            if(eThreads.length > 3){
+                                //1.3, Find the Admin and create the user profiles with AJAX
+                                
+                                const lP= eThreads.length-1;
+                                var admin= ePattern.exec(eThreads[lP]);
+                                //the last item on the array will the be adminstator of the email. The first email match (From:) will be the Admin
+                                for (a = 0; a < emails.length; a++) {
+                                    $.ajax({
+                                        url: "/user",
+                                        method: "POST",
+                                        data: {
+                                            userEmail: emails[a],
+                                            password: "password"
+                                        }
+                                    })
+                                        .done(function () {
+                                            console.log("User ${emails[a]} account created")
+                                        });
+
+                                }
+                                var participants=[];
+                                var temp=[]
+                                //Create found user profiles, awaits Admin user or option to specify
+                                //2.1,  Emails. Grab all participants of the singular email and push into array at the index of the thread
+                                for(b=0; b<eThreads.length; b++){
+                                         for(c=0; c<emails.length;c++){
+                                             if(eThreads[b].includes(emails[c])){
+                                                 temp.push(emails[c]);
+                                             }
+                                         }
+                                         participants.push(temp);
+                                         temp=[];
+                                }
+                                //2.2, Grab the subject line of each thread and push into array.
+                                const subPattern= /Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})*/g;
+                                const subject=[];
+                                
+                            
+                                 /*for(d=0;d<eThreads.length;d++){
+                                    match= subPattern.exec(eThreads[d]);
+                                    subject.push(match[1]);
+                                 }
+                                 */
+                            //checking if the current index is not inside the clean array before we push in
+                            //1.2, Version (outlook only chain, Have to create cases for others): Seperate threads into singular threads and determine futher analysis 
+                            // alert("checkpoint "+emails[0]);
                             //1.3, Find the Admin and create the user profiles with AJAX
                             //2.1 : Emails. First find creator of the singular email and push into array 
                             //2.2, Grab the subject line of each thread and push into array.
