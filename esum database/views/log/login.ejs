@@ -1,0 +1,57 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login</title>
+		<%- include("../partials/head.ejs") %>
+	</head>
+	<body>
+		<h1>Login to ESUM</h1>
+		<form id="login">
+			<label for="email" id="elabel">Email:</label>
+			<input type="text" autocomplete="off" id="userEmail" placeholder="user@albany.edu" required/>
+			<br>
+			<label for="password" id="plabel">Password:</label>
+			<input type="password" autocomplete="off" id="password" placeholder="Password" required/>
+			<br>
+			<input type="submit" value="Login" />
+			<a href="./change-password" id ="ForgotPass" class="button">Forgot Your Password?</a>
+			<br>
+			<a href="./register" id ="createAcc" class="button">Dont Have an Account? Create One Here!</a>
+		</form>
+
+		<script>
+			const form = document.getElementById('login')
+			form.addEventListener('submit', login)
+
+			async function login(event) {
+				event.preventDefault()
+				const userEmail = document.getElementById('userEmail').value
+				const password = document.getElementById('password').value
+
+				const result = await fetch('/log/login', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						userEmail,
+						password
+					})
+				}).then((res) => res.json())
+
+				if (result.status === 'ok') {
+					// everything went fine
+					console.log('Got the token: ', result.data)
+					localStorage.setItem('token', result.data)
+					alert('Successfully Logged In!')
+					//if we change the port number this also needs to be 
+					//changed until I figure out a workaround
+					window.location.replace('/')
+				} else {
+					alert(result.error)
+				}
+			}
+		</script>
+	</body>
+</html>
