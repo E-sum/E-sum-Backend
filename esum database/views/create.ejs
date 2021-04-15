@@ -86,7 +86,7 @@
                                 //the last item on the array will the be adminstator of the email. The first email match (From:) will be the Admin
                                 for (a = 0; a < emails.length; a++) {
                                     $.ajax({
-                                        url: "/user",
+                                        url: "/user/user",
                                         method: "POST",
                                         data: {
                                             userEmail: emails[a],
