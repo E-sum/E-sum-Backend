@@ -83,22 +83,28 @@
                             if(eThreads.length > 3){
                                 //1.3, Find the Admin and create the user profiles with AJAX
                                 
-                                const lP= eThreads.length-1;
+                                const lP= eThreads.length-1; 
                                 var admin= ePattern.exec(eThreads[lP]);
                                 //the last item on the array will the be adminstator of the email. The first email match (From:) will be the Admin
-                                for (a = 0; a < emails.length; a++) {
+
+                                let max=Math.floor(Math.random()*2000);
+                                max=max.toString();
+                                var pass= "password"+max;
+                                alert('Admin: your group password is:'+ pass);
+                                //basic randomized password function, tells admin to spread password with memeber
+                            
+                                for (var a = 0; a < emails.length; a++) {
                                     $.ajax({
                                         url: "/user/user",
                                         method: "POST",
                                         data: {
                                             userEmail: emails[a],
-                                            password: "password"
+                                            password: pass
                                         }
                                     })
-                                        .done(function () {
-                                            console.log("User ${emails[a]} account created")
+                                        .done(function (){
+                                            console.log("User "+emails[a]+"account is created");
                                         });
-
                                 }
                                 var participants=[];
                                 var temp=[]
