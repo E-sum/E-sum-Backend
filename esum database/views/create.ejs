@@ -113,19 +113,23 @@
                                          participants.push(temp);
                                          temp=[];
                                 }
+                             
                                 //2.2, Grab the subject line of each thread and push into array.
                                 const subPattern= /Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})*/g;
                                 const subject=[];
-                                
-                            
-                                 /*for(d=0;d<eThreads.length;d++){
-                                    match= subPattern.exec(eThreads[d]);
-                                    subject.push(match[1]);
-                                 }
-                                 */
+                                i=0;
+                             
+                                for (d = 0; d < eThreads.length; d++) {
+                                    match = subPattern.exec(eThreads[d]);   
+                                    while (match) {
+                                        subject[i] = match[1];
+                                        i++;
+                                        match = subPattern.exec(eThreads[d]);
+                                    }
+                                }
+                                //Bug? Cannot find way to not grab \t between subject and body, it will grab first line of body- Will come back to fix
                                
-                                  
-                                //Bug? If there's no \n between subject and body, it will grab first line of body- Will come back to fix
+                    
                                 //2.3, Grab the date of the email thread
                                 
                                 //2.4, Grab the body of the email thread
