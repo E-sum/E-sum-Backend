@@ -99,7 +99,7 @@
                                     t = outsideE.exec(temp[z]);
                                     if (z==0 && !temp[0].includes(outgroup[0])) {
                                         eThreads.push(temp[z]);
-                                        //if there's not an outside eProvider in the specific string, Push whole block into eThreads. USed to account the first match
+                                        //if there's not an outside eProvider in the specific string, Push whole block into eThreads. This accounts the first match
                                     } else if (!t && z!=0){
                                         eThreads.push(temp[z]);
                                         //For the matches after zero
@@ -115,7 +115,13 @@
                                 }
                             } else {
                                 //If there's no match, There is no text inside the file
-                                alert("There no text inside this file!");
+                                alert("There are no email threads inside this file!");
+                                $.ajax({
+                                   url:"/email/create",
+                                   method:"GET",
+                                   success:function(){ console.log("User submitted a file that's not a email chain")},
+                                   error: function(){console.log("error in GET")}
+                               });
                             }
 
                             if(eThreads.length > 3){
