@@ -76,9 +76,47 @@
                                 }
                             }
                             //checking if the current index is not inside the clean array before we push in
-                            //1.2, Version (outlook only chain, Have to create cases for others): Seperate threads into singular threads and determine futher analysis 
-                            // alert("checkpoint "+emails[0]);
-                            const eThreads=file.split("From:")
+                            //1.2, Version (outlook only and outlook and Outside email provider): Seperate threads into singular threads and determine futher analysis 
+
+                            const outlook = /From:/;
+                            const outsideE = /On \w{3} \d{1,2}[,] \d{4}[,]|On \w{3,9}[,] \w{3,9} \d{1,2}[,]/g;
+
+                            //Test if the email is exhange with the same email provider: Only see From,cc,cd,to between all users, any Hotmail and Outlook service will treat as same Email provifer
+                            //Or if the exchange is between emails outside of the provider: Outlook->Yahoo,Google,Pronto
+                            var ingroup = outlook.exec(file);
+                            var outgroup = outsideE.exec(file);
+
+                            if (ingroup && !outgroup) {
+                                //If emails are within the same email provider
+                                var eThreads = file.split(outlook);
+
+                            } else if (ingroup && outgroup) {
+                                //If emails are exchanged between different email providers
+                                var eThreads=[];
+                                var t;
+                                var temp = file.split(outlook);
+                                for (z = 0; z < temp.length; z++) {
+                                    t = outsideE.exec(temp[z]);
+                                    if (z==0 && !temp[0].includes(outgroup[0])) {
+                                        eThreads.push(temp[z]);
+                                        //if there's not an outside eProvider in the specific string, Push whole block into eThreads. USed to account the first match
+                                    } else if (!t && z!=0){
+                                        eThreads.push(temp[z]);
+                                        //For the matches after zero
+                                    }else {
+                                        var temp2 = temp[z].split(outsideE);
+                                        for (y = 0; y < temp2.length; y++) {
+                                            eThreads.push(temp2[y]);
+                                        }
+                                       // Spilt string into multiple blocks  with outsideE and push in-order of new spilt
+                                    }
+                                    
+
+                                }
+                            } else {
+                                //If there's no match, There is no text inside the file
+                                alert("There no text inside this file!");
+                            }
 
                             if(eThreads.length > 3){
                                 //1.3, Find the Admin and create the user profiles with AJAX
@@ -146,7 +184,7 @@
                             }else{
                                alert("The submission is too small for analysis: Try a longer submission");
                                $.ajax({
-                                   url:"/email",
+                                   url:"/email/create",
                                    method:"GET",
                                    success:function(){ console.log("Submission threads under three: no accounts were made")},
                                    error: function(){console.log("error in GET")}
