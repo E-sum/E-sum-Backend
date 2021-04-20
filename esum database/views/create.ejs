@@ -150,44 +150,52 @@
                                             console.log("User "+emails[a]+"account is created");
                                         });
                                 }
-                                var participants=[];
-                                var temp=[]
+                                var participants = [];
+                                var temp = []
                                 //Create found user profiles, awaits Admin user or option to specify
                                 //2.1,  Emails. Grab all participants of the singular email and push into array at the index of the thread
-                                for(b=0; b<eThreads.length; b++){
-                                         for(c=0; c<emails.length;c++){
-                                             if(eThreads[b].includes(emails[c])){
-                                                 temp.push(emails[c]);
-                                             }
-                                         }
-                                         participants.push(temp);
-                                         temp=[];
-                                }
-                             
-                                //2.2, Grab the subject line of each thread and push into array.
-                                const subPattern= /Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})*/g;
-                                const subject=[];
-                                i=0;
-                             
-                                for (d = 0; d < eThreads.length; d++) {
-                                    match = subPattern.exec(eThreads[d]);   
-                                    while (match) {
-                                        subject[i] = match[1];
-                                        i++;
-                                        match = subPattern.exec(eThreads[d]);
+                                for (b = 0; b < eThreads.length; b++) {
+                                    for (c = 0; c < emails.length; c++) {
+                                        if (eThreads[b].includes(emails[c])) {
+                                            temp.push(emails[c]);
+                                        }
                                     }
+                                    participants.push(temp);
+                                    temp=[];
                                 }
-                                //Bug? Cannot find way to not grab \t between subject and body, it will grab first line of body- Will come back to fix
-                               
-                    
+                                //2.2, Grab the subject line of each thread and push into array.
+                                //Replace any new line (the account of 2+ Spaces) with two stars, Helps with bug of short/no subjects-> grabs first sentence, limits down to Greeting
+                                const newSec = /\s{2}/g;
+
+                                for (x = 0; x < eThreads.length; x++) {
+                                    eThreads[x] = eThreads[x].replace(newSec, "**");
+                                }
+                                //** can be used in grabbing the body from the email
+                                const subPattern = /Subject: [\s{1}\w-.:()_/]{0,72}[^**]/g;
+                                var subject = [];
+
+
+                                for (d = 0; d < eThreads.length; d++) {
+                                    match = subPattern.exec(eThreads[d]);
+                                    if (match) {
+                                        subject.push(match[0]);
+                                    }
+
+                                }
+
+                                //Bug? Sometimes the pattern is ignored, Next update either fixes this bug or palacates the problem with subsitution
+                                //Note: If user exchanges emails with a Google provider: Google doesn't include Subject in Threads with From and CC'd users
+                                //Possible solution: Subsitution
+
+
                                 //2.3, Grab the date of the email thread
-                                
+
                                 //2.4, Grab the body of the email thread
                                 //2.5, Idenitfy if body has a signuartue and delete.
                                 //2.6, Create the AJAX post with the email model in mind for the data section
 
 
-                            }else{
+                            } else {
                                alert("The submission is too small for analysis: Try a longer submission");
                                $.ajax({
                                    url:"/email/create",
