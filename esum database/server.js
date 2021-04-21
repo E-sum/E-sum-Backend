@@ -30,10 +30,10 @@ server.use(bodyParser.json())
 
 // routes
 server.use('/email', require('./routes/emailRoutes'));
-server.use('/user', require('./routes/userRoutes'));
+server.use('/', require('./routes/userRoutes'));
 server.use('/', require('./routes/navRoutes'));
 server.use('/log', require('./routes/logRoutes'));
-server.use('/admin', require('./routes/adminRoutes'));
+server.use('/', require('./routes/adminRoutes'));
 
 // 404 page
 server.use((req, res) => {
