@@ -111,3 +111,8 @@ body {
       font-size: 1.2em;
       cursor: pointer;
     }
+    /* Indents list and gets rid of the bullets*/
+    ul{
+      list-style-type: none;
+      margin:25px;
+    }
