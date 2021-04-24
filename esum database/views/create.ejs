@@ -1,46 +1,44 @@
 <html lang="en">
 <%- include("./partials/head.ejs") %>
 
-<body>
-  <%- include("./partials/navDash.ejs") %>
+    <body>
+        <%- include("./partials/navDash.ejs") %>
 
-  <div class="create-email content">
-    <form action="/email" method="POST">
-      <label for="subject">Email Subject:</label>
-      <input type="text" id="subject" name="subject" required>
-      <label for="receipient">Email Receipients:</label>
-      <input type="text" id="receipient" name="receipient" required>
-      <label for="body">Email body:</label>
-      <textarea id="body" name="body" required></textarea>
-      <label for="userId">user ID:</label>
-      <input id="userId" name="userId" required></input>
-      <button>Submit</button>
-    </form>
+            <div class="create-email content">
+                <form action="/email" method="POST">
+                    <label for="subject">Email Subject:</label>
+                    <input type="text" id="subject" name="subject" required>
+                    <label for="receipient">Email Receipients:</label>
+                    <input type="text" id="receipient" name="receipient" required>
+                    <label for="body">Email body:</label>
+                    <textarea id="body" name="body" required></textarea>
+                    <label for="userId">user ID:</label>
+                    <input id="userId" name="userId" required></input>
+                    <button>Submit</button>
+                </form>
 
-    <h2>New thread to analyze? </h2>
-    <p>
-        Upload your Email file below
+                <h2>New thread to analyze? </h2>
+                <p>
+                    Upload your Email file below
 
-    <form id="file_sub">
-            <input type="file" name="orgEmail" accept=".txt">
-            <br>
-            <input type="submit" value="Upload">
-    </form>
-    <small>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a> </small>
-    </p>
+                <form id="file_sub">
+                    <input type="file" name="orgEmail" accept=".txt">
+                    <br>
+                    <input type="submit" value="Upload">
+                </form>
+                <small>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a> </small>
+                </p>
 
-  </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                    $("#file_sub").submit(function(e) {
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    $("#file_sub").submit(function (e) {
                         e.preventDefault();
                         //Don't submit after click, as Ajax will create post request
-                        
                         var f = $('input[type="file"]')[0].files[0];
                         //retrieve contents from the uploaded file
                         const scan = new FileReader();
-
                         scan.onload = function () {
                             let content = scan.result;
                             esumAnalysis(content);
@@ -48,118 +46,291 @@
                         }
                         scan.readAsText(f);
                         //reads uploaded text file and the results awaits in the onload events
-
-
                         function esumAnalysis(file) {
                             //1.1, Find all emails in thread
                             const ePattern = /(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
                             // the patttern of a email is used for a match. Global tag makes sure exec searches for all instances 
-
-                           
                             let match = ePattern.exec(file);
                             var allEmail = [];
                             let i = 0;
-
                             while (match) {
                                 allEmail[i] = match[1];
                                 i++;
                                 match = ePattern.exec(file);
                             }
                             //every time there's a match for an email, add the email onto the array
-
                             //2.1, Remove the duplicate emails from the lists
                             let emails = [];
-
                             for (j = 0; j < allEmail.length; j++) {
                                 if (!emails.includes(allEmail[j])) {
                                     emails.push(allEmail[j]);
                                 }
                             }
                             //checking if the current index is not inside the clean array before we push in
-                            //1.2, Version (outlook only chain, Have to create cases for others): Seperate threads into singular threads and determine futher analysis 
-                            // alert("checkpoint "+emails[0]);
-                            const eThreads=file.split("From:")
-
-                            if(eThreads.length > 3){
-                                //1.3, Find the Admin and create the user profiles with AJAX
-                                
-                                const lP= eThreads.length-1; 
-                                var admin= ePattern.exec(eThreads[lP]);
-                                //the last item on the array will the be adminstator of the email. The first email match (From:) will be the Admin
-
-                                let max=Math.floor(Math.random()*2000);
-                                max=max.toString();
-                                var pass= "password"+max;
-                                alert('Admin: your group password is:'+ pass);
-                                //basic randomized password function, tells admin to spread password with memeber
-                            
-                                for (var a = 0; a < emails.length; a++) {
-                                    $.ajax({
-                                        url: "/user/user",
-                                        method: "POST",
-                                        data: {
-                                            userEmail: emails[a],
-                                            password: pass
+                            //1.2, Version (outlook only and outlook and Outside email provider): Seperate threads into singular threads and determine futher analysis 
+                            const outlook = /From:/;
+                            const outsideE = /On \w{3} \d{1,2}[,] \d{4}[,]|On \w{3,9}[,] \w{3,9} \d{1,2}[,]/g;
+                            //Test if the email is exhange with the same email provider: Only see From,cc,cd,to between all users, any Hotmail and Outlook service will treat as same Email provifer
+                            //Or if the exchange is between emails outside of the provider: Outlook->Yahoo,Google,Pronto
+                            var ingroup = outlook.exec(file);
+                            var outgroup = outsideE.exec(file);
+                            if (ingroup && !outgroup) {
+                                //If emails are within the same email provider
+                                var eThreads = file.split(outlook);
+                            } else if (ingroup && outgroup) {
+                                //If emails are exchanged between different email providers
+                                var eThreads = [];
+                                var t;
+                                var temp = file.split(outlook);
+                                for (z = 0; z < temp.length; z++) {
+                                    t = outsideE.exec(temp[z]);
+                                    if (z == 0 && !temp[0].includes(outgroup[0])) {
+                                        eThreads.push(temp[z]);
+                                        //if there's not an outside eProvider in the specific string, Push whole block into eThreads. This accounts the first match
+                                    } else if (!t && z != 0) {
+                                        eThreads.push(temp[z]);
+                                        //For the matches after zero
+                                    } else {
+                                        var temp2 = temp[z].split(outsideE);
+                                        for (y = 0; y < temp2.length; y++) {
+                                            eThreads.push(temp2[y]);
                                         }
-                                    })
-                                        .done(function (){
-                                            console.log("User "+emails[a]+"account is created");
-                                        });
-                                }
-                                var participants=[];
-                                var temp=[]
-                                //Create found user profiles, awaits Admin user or option to specify
-                                //2.1,  Emails. Grab all participants of the singular email and push into array at the index of the thread
-                                for(b=0; b<eThreads.length; b++){
-                                         for(c=0; c<emails.length;c++){
-                                             if(eThreads[b].includes(emails[c])){
-                                                 temp.push(emails[c]);
-                                             }
-                                         }
-                                         participants.push(temp);
-                                         temp=[];
-                                }
-                             
-                                //2.2, Grab the subject line of each thread and push into array.
-                                const subPattern= /Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})*/g;
-                                const subject=[];
-                                i=0;
-                             
-                                for (d = 0; d < eThreads.length; d++) {
-                                    match = subPattern.exec(eThreads[d]);   
-                                    while (match) {
-                                        subject[i] = match[1];
-                                        i++;
-                                        match = subPattern.exec(eThreads[d]);
+                                        // Spilt string into multiple blocks  with outsideE and push in-order of new spilt
                                     }
                                 }
-                                //Bug? Cannot find way to not grab \t between subject and body, it will grab first line of body- Will come back to fix
-                               
-                    
-                                //2.3, Grab the date of the email thread
-                                
-                                //2.4, Grab the body of the email thread
-                                //2.5, Idenitfy if body has a signuartue and delete.
-                                //2.6, Create the AJAX post with the email model in mind for the data section
-
-
-                            }else{
-                               alert("The submission is too small for analysis: Try a longer submission");
-                               $.ajax({
-                                   url:"/email",
-                                   method:"GET",
-                                   success:function(){ console.log("Submission threads under three: no accounts were made")},
-                                   error: function(){console.log("error in GET")}
-                               });
+                            } else {
+                                //If there's no match, There is no text inside the file
+                                alert("There are no email threads inside this file!");
+                                $.ajax({
+                                    url: "/email/create",
+                                    method: "GET",
+                                    success: function () { console.log("User submitted a file that's not a email chain") },
+                                    error: function () { console.log("error in GET") }
+                                });
                             }
-
+                            //1.3, Find the Admin and create the user profiles with AJAX
+                            if (eThreads.length > 3) {
+                                //checks if the first element in the array is empty, it will re-adjusted before its process
+                                if (!eThreads[0]) {
+                                    eThreads = eThreads.slice(1, eThreads.length);
+                                }
+                                const lP = eThreads.length - 1;
+                                var admin = ePattern.exec(eThreads[lP]);
+                                //Goto the first thread and first match will be admin
+                                //find the position of the admin email in email list
+                                var adPos;
+                                for (z = 0; z < emails.length; z++) {
+                                    if (admin[0] == emails[z]) {
+                                        adPos = z;
+                                    }
+                                }
+                                let max = Math.floor(Math.random() * 2000);
+                                max = max.toString();
+                                var pass = "password" + max;
+                                //basic randomized password function, tells admin to spread password with memeber
+                                alert('Admin: your group password is:' + pass);
+                                //Create admin account seperate from users
+                                $.ajax({
+                                    url: "/admin",
+                                    method: "POST",
+                                    data: {
+                                        adminEmail: emails[adPos],
+                                        password: pass
+                                    }
+                                }).done(function () {
+                                    console.log("Admin " + emails[adPos] + "account is created");
+                                });
+                                for (var a = 0; a < emails.length; a++) {
+                                    if (a != adPos) {
+                                        $.ajax({
+                                            url: "/user",
+                                            method: "POST",
+                                            data: {
+                                                userEmail: emails[a],
+                                                password: pass
+                                            }
+                                        })
+                                            .done(function () {
+                                                console.log("User " + emails[a] + "account is created");
+                                            });
+                                    }
+                                }
+                                var participants = [];
+                                var temp = []
+                                //Create found user profiles, awaits Admin user or option to specify
+                                //2.1,  Emails. Grab all participants of the singular email and push into array at the index of the thread
+                                for (b = 0; b < eThreads.length; b++) {
+                                    for (c = 0; c < emails.length; c++) {
+                                        if (eThreads[b].includes(emails[c])) {
+                                            temp.push(emails[c]);
+                                        }
+                                    }
+                                    participants.push(temp);
+                                    temp = [];
+                                }
+                                //2.2, Grab the subject line of each thread and push into array.
+                                //Replace any new line ( the account of 2+ Spaces) with two stars, Helps with bug of short/no subjects-> grabs first sentence, limits down to Greeting
+                                const newSec = /\s{3}/gu;
+                                for (x = 0; x < eThreads.length; x++) {
+                                    eThreads[x] = eThreads[x].replace(newSec, "**");
+                                }
+                                //** can be used in grabbing the body from the email
+                                //Subject: [\s{1}\w-.:()/]{0,72}[^**]
+                                //Subject: [\s{1}\w-.:()/]{0,72}\s{1}
+                                //Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})* 
+                                const subPattern = /Subject: [\s{1}\w\-.:()_#+]{0,72}[^**]|Subject: [\s{1}\w\-.:()_#+]{0,72} /g;
+                                var subject = [];
+                                var lastID = [];
+                                for (d = 0; d < eThreads.length; d++) {
+                                    match = subPattern.exec(eThreads[d]);
+                                    if (match) {
+                                        subject.push(match[0]);
+                                        lastID.push(subPattern.lastIndex);
+                                    } else {
+                                        subject.push("N/A");
+                                        lastID.push("N");
+                                    }
+                                    //Handles if Subject is Null or can't be found
+                                }
+                                //Bug? Sometimes the pattern is ignored, Next update either fixes this bug or palacates the problem with subsitution
+                                //Note: If user exchanges emails with a Google provider: Google doesn't include Subject in Threads with From and CC'd users
+                                //Possible solution: Subsitution
+                                for (e = 0; e < subject.length; e++) {
+                                    if (subject[e] == "N/A") {
+                                        if (subject[e - 1] != "N/A" && e != 0) {
+                                            subject[e] = subject[e - 1];
+                                        } else if (subject[e + 1] != "N/A") {
+                                            subject[e] = subject[e + 1];
+                                        } else {
+                                            //If the subject is N/A, We will check the position before and after if there is a non null subject line and repalce it
+                                            //Handles the event where program cannot recongnize pattern for some reason and grab the closet Subject available
+                                        }
+                                    }
+                                }
+                                var body = [];
+                                temp = [];
+                                //(?<=\*\*)(.*?)(?<=\*\*)
+                                //\*\*(.*?)\*\*
+                                const bPattern = /\*\*+(.*)+\*\*/gs;
+                                //2.4, Grab the body of the email thread
+                                for (f = 0; f < eThreads.length; f++) {
+                                    if (lastID[f] != "N") {
+                                        body.push(eThreads[f].slice(lastID[f] + 1,));
+                                        //If subject is found: Just start from the last index to the end of the str
+                                    } else {
+                                        //If subject isn't located, Search for a string bounded in ** 
+                                        match = bPattern.exec(eThreads[f]);
+                                        while (match) {
+                                            temp.push(match[1]);
+                                            match = bPattern.exec(eThreads[f]);
+                                        }
+                                        if (temp.length == 1) {
+                                            body.push(temp[0]);
+                                        } else {
+                                            body.push(temp);
+                                        }
+                                        temp = [];
+                                    }
+                                }
+                                //2.5, Idenitfy if body has a signuartue and delete.
+                                // A list of common email signatures
+                                const sigPattern = /Best[,]|Best Wishes|Best Regards|Regards|Warm Regards|Warmly[,]|Take care|Thanks[,]?|Thanks so much|Thanks\!|Thank you[,]?|Thanks for your consideration|Hope this helps|Looking forward[,]?|Cheers|Thanks again[,]?|Sincerely|Respectfully|All the best[,]?|Looking forward to|Hope this helps|Looking forward to|Thank you for your consideration[,]?|Get Outlook for iOS|Get Outlook for Android|Sent on the go \.\.\.|Sent From \w*|Sent from my iPhone|\(\d{3}\) \d{3}\-\d{4}|(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
+                                const star = /\*\*/g;
+                                var target;
+                                var t;
+                                temp2 = [];
+                                for (h = 0; h < body.length; h++) {
+                                    temp2 = body[h].split(star);
+                                    for (i = 0; i < temp2.length; i++) {
+                                        match = sigPattern.exec(temp2[i]);
+                                        if (match) {
+                                            //There's a match, cut off the string before the first character of the match
+                                            t = match[0];
+                                            target = temp2[i].indexOf(t);
+                                            if (temp2[i].slice(0, target - 1) == "") {
+                                                //If this slice will make the curent string null, the array will shift and we have to clear from the shift position
+                                                var pos = temp2.length;
+                                                if (i != (pos - 1)) {
+                                                    for (j = i; j < temp2.length; j++) {
+                                                        temp2[j] = "";
+                                                    }
+                                                    //if its not the final item, clean the rest of the string from match point
+                                                } else {
+                                                    temp2[i] = temp2[i].slice(0, target - 1);
+                                                }
+                                            } else {
+                                                //If the slice doesn't make the current string null, clear the rest of the text
+                                                temp2[i] = temp2[i].slice(0, target - 1);
+                                                match = sigPattern.exec(temp2[i]);
+                                                if (match) {
+                                                    for (j = i; j < temp2.length; j++) {
+                                                        temp2[j] = "";
+                                                    }
+                                                    //If the slice is produced and there's still a match on this line, Remove entire line and rest. In cases where user has automatic signature block
+                                                }
+                                                for (j = i + 1; j < temp2.length; j++) {
+                                                    temp2[j] = "";
+                                                }
+                                            }
+                                        }
+                                    }
+                                    body[h] = temp2.join(" ");
+                                    temp2 = [];
+                                    //Rejoin the body together after signature is removed and recycle
+                                }
+                                const clean = /\*\*|\*/g;
+                                for (k = 0; k < body.length; k++) {
+                                    body[k] = body[k].replace(clean, " ");
+                                }
+                                var email = [];
+                                
+                                const ep=/\w+[.-]?\w+@\w+\.\w{2,3}/;
+                                //created a new email pattern: epattern has global tag, so it will remember last match of the text than restart from top
+                                //2.6 Retrieve creators  of every email found for email submissions 
+                                for(w=0; w<eThreads.length;w++){
+                                    match=ep.exec(eThreads[w]);
+                                    email.push(match[0]);
+                                }
+                                //2.9, Create the AJAX post with the email model in mind for the data section
+                               
+                                for(s=0;s<body.length;s++){
+                                    
+                                    $.ajax({
+                                        url: "/email",
+                                        method: "POST",
+                                        data:{
+                                            subject: subject[s],
+                                            receipient:participants[s],
+                                            body:body[s],
+                                            userId:email[s]
+                                        }
+                                    })
+                                    .done(function(){
+                                        console.log("email submission completed");
+                                       
+                                    });
+                                }
+                                alert("Submission complete, Check Emails!");
+                                $.ajax({
+                                    url: "/email/create",
+                                    method: "GET",
+                                });
+                                //3.0 send update request for their ID's and replace the string inside
+                            } else {
+                                alert("The submission is too small for analysis: Try a longer submission");
+                                $.ajax({
+                                    url: "/email/create",
+                                    method: "GET",
+                                    success: function () { console.log("Submission threads under three: no accounts were made") },
+                                    error: function () { console.log("error in GET") }
+                                });
+                            }
                         }
-
                     });
                 });
-        </script> 
-        <!--Google's jquery library-->        
-  <%- include("./partials/footer.ejs") %>
-</body>
+            </script>
+            <!--Google's jquery library-->
+            <%- include("./partials/footer.ejs") %>
+    </body>
 
 </html>
