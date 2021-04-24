@@ -349,9 +349,14 @@
                                     })
                                     .done(function(){
                                         console.log("email submission completed");
+                                       
                                     });
                                 }
-
+                                alert("Submission complete, Check Emails!");
+                                $.ajax({
+                                    url: "/email/create",
+                                    method: "GET",
+                                });
 
                                 //3.0 send update request for their ID's and replace the string inside
 
