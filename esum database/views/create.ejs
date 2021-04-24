@@ -263,14 +263,39 @@
                                         temp = [];
                                     }
                                 }
-                                //2.5, Idenitfy if body has a signuartue and delete.
-                                // A list of common email signatures
-                                const sigPattern = /Sent on the go \.\.\.|Sent From|Best|Best Wishes|Best Regards|Regards|Warm Regards|Warmly|Take care|Thanks|Thanks so much|Thanks\!|Thank you|Thanks for your consideration|Hope this helps|Looking forward|Sent from my iPhone|Thank you for your consideration|\(\d{3}\) \d{3}\-\d{4}|Cheers|Thanks again|Sincerely|Respectfully|All the best|Looking forward to|Hope this helps|(\w+([.-]?\w)+@\w+(\.\w{2,3}))|Looking forward to/g;
+                                const sigPattern = /Best[,]|Best Wishes|Best Regards|Regards|Warm Regards|Warmly[,]|Take care|Thanks[,]?|Thanks so much|Thanks\!|Thank you[,]?|Thanks for your consideration|Hope this helps|Looking forward[,]?|Cheers|Thanks again[,]?|Sincerely|Respectfully|All the best[,]?|Looking forward to|Hope this helps|Looking forward to|Thank you for your consideration[,]?|Get Outlook for iOS|Get Outlook for Android|Sent on the go \.\.\.|Sent From \w*|Sent from my iPhone|\(\d{3}\) \d{3}\-\d{4}|(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
+                                const star=/\*\*/g;
+                                var target;
+                                var t;
+                                temp2=[];
 
+                                for(h=0;h<body.length;h++){
+                                    temp2=body[h].split(star);
+                                    for(i=0;i<temp2.length;i++){
+                                        match=sigPattern.exec(temp2[i]);
+                                        if(match){
+                                            t=match[0];
+                                            target=temp2[i].indexOf(t);
+                                            temp2[i]=temp2[i].slice( 0,target-1);
+                                            if(!temp2[i+1]){
+                                                for(j=0;j<temp2.length;j++){
+                                                    temp2[j+i]="";
+                                                }
+                                            }
+                                            //cut off before the first character of the match
+                                        }
+                                    }
+                                    body[h]=temp2.join(" ");
+                                    temp2=[]; 
+                                    //Rejoin the body together after signature is removed and recycle
+                                }
+                                const clean=/\*\*|\*/g;
+                                for (k = 0; k < body.length; k++) {
+                                    body[k] = body[x].replace(clean, " ");
+                                }
 
-
-
-
+                                
+                            
 
                                 //2.6, Create the AJAX post with the email model in mind for the data section
 
