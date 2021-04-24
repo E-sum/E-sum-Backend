@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser');
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +20,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 server.set('view engine', 'ejs');
 
 // middleware & static files
+server.use(cookieParser());
 server.use(express.static('public'));
 server.use(express.urlencoded({ extended: true }));
 server.use(morgan('dev'));
@@ -32,7 +34,6 @@ server.use(bodyParser.json())
 server.use('/email', require('./routes/emailRoutes'));
 server.use('/', require('./routes/userRoutes'));
 server.use('/', require('./routes/navRoutes'));
-server.use('/log', require('./routes/logRoutes'));
 server.use('/', require('./routes/adminRoutes'));
 
 // 404 page

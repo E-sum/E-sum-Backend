@@ -27,7 +27,7 @@
 				const password = document.getElementById('password').value
 				const cpass = document.getElementById('cpassword').value
 
-				const result = await fetch('/log/register', {
+				const result = await fetch('/register', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
@@ -42,7 +42,7 @@
 				if (result.status === 'ok') {
 					// everythign went fine
 					alert('Success')
-					window.location.replace('/log/login')
+					window.location.replace('/login')
 				} else {
 					alert(result.error)
 				}

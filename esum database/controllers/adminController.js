@@ -1,10 +1,10 @@
 const monAdmin = require('../models/admin');
 
-const admin_create = (req,res) => {
+const admin_create = (req, res) => {
     const adminEmail = req.body.adminEmail;
     const password = req.body.password;
 
-    const newAdmin = new monAdmin({adminEmail:adminEmail, password:password});
+    const newAdmin = new monAdmin({ adminEmail: adminEmail, password: password });
     newAdmin.save()
         .then(result => {
             res.send(result);
@@ -14,8 +14,8 @@ const admin_create = (req,res) => {
         })
 }
 
-const admin_index = (req,res) => {
-    monAdmin.find().sort({createdAt: -1})
+const admin_index = (req, res) => {
+    monAdmin.find().sort({ createdAt: -1 })
         .then(result => {
             res.send(result);
         })
@@ -24,7 +24,7 @@ const admin_index = (req,res) => {
         })
 }
 
-const admin_delete = (req,res) => {
+const admin_delete = (req, res) => {
     const id = req.params.id;
 
     monAdmin.findByIdAndDelete(id)
