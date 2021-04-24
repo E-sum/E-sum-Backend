@@ -1,8 +1,8 @@
 const monAdmin = require('../models/admin');
 
 const admin_create = (req,res) => {
-    const adminEmail = req.query.adminEmail;
-    const password = req.query.password;
+    const adminEmail = req.body.adminEmail;
+    const password = req.body.password;
 
     const newAdmin = new monAdmin({adminEmail:adminEmail, password:password});
     newAdmin.save()
