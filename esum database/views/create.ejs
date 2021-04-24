@@ -124,11 +124,12 @@
                                 });
                             }
 
+
+                            //1.3, Find the Admin and create the user profiles with AJAX
                             if (eThreads.length > 3) {
                                 //checks if the first element in the array is empty, it will re-adjusted before its process
                                 if (!eThreads[0]) {
                                     eThreads = eThreads.slice(1, eThreads.length);
-
                                 }
                                 const lP = eThreads.length - 1;
                                 var admin = ePattern.exec(eThreads[lP]);
@@ -159,8 +160,6 @@
                                 }).done(function () {
                                     console.log("Admin " + emails[adPos] + "account is created");
                                 });
-
-                                //skip over admin email and create the non admin users
                                 for (var a = 0; a < emails.length; a++) {
                                     if (a != adPos) {
                                         $.ajax({
@@ -214,13 +213,13 @@
                                         subject.push("N/A");
                                         lastID.push("N");
                                     }
-                                    //Handles if Subeject is Null or can't be found
+                                    //Handles if Subject is Null or can't be found
                                 }
 
                                 //Bug? Sometimes the pattern is ignored, Next update either fixes this bug or palacates the problem with subsitution
                                 //Note: If user exchanges emails with a Google provider: Google doesn't include Subject in Threads with From and CC'd users
                                 //Possible solution: Subsitution
-                                // 2.3, Subsitution, For NULLS in subject array: No subject /subject cut off/ pattern didn't matched
+
                                 for (e = 0; e < subject.length; e++) {
                                     if (subject[e] == "N/A") {
                                         if (subject[e - 1] != "N/A" && e != 0) {
@@ -257,48 +256,104 @@
                                             body.push(temp[0]);
                                         } else {
                                             body.push(temp);
-                                            //catch case if ** match didn't choose lazy route and create 1+ array 
                                         }
 
                                         temp = [];
                                     }
                                 }
+                                //2.5, Idenitfy if body has a signuartue and delete.
+                                // A list of common email signatures
                                 const sigPattern = /Best[,]|Best Wishes|Best Regards|Regards|Warm Regards|Warmly[,]|Take care|Thanks[,]?|Thanks so much|Thanks\!|Thank you[,]?|Thanks for your consideration|Hope this helps|Looking forward[,]?|Cheers|Thanks again[,]?|Sincerely|Respectfully|All the best[,]?|Looking forward to|Hope this helps|Looking forward to|Thank you for your consideration[,]?|Get Outlook for iOS|Get Outlook for Android|Sent on the go \.\.\.|Sent From \w*|Sent from my iPhone|\(\d{3}\) \d{3}\-\d{4}|(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
-                                const star=/\*\*/g;
+                                const star = /\*\*/g;
                                 var target;
                                 var t;
-                                temp2=[];
+                                temp2 = [];
 
-                                for(h=0;h<body.length;h++){
-                                    temp2=body[h].split(star);
-                                    for(i=0;i<temp2.length;i++){
-                                        match=sigPattern.exec(temp2[i]);
-                                        if(match){
-                                            t=match[0];
-                                            target=temp2[i].indexOf(t);
-                                            temp2[i]=temp2[i].slice( 0,target-1);
-                                            if(!temp2[i+1]){
-                                                for(j=0;j<temp2.length;j++){
-                                                    temp2[j+i]="";
+                                for (h = 0; h < body.length; h++) {
+                                    temp2 = body[h].split(star);
+                                    for (i = 0; i < temp2.length; i++) {
+                                        match = sigPattern.exec(temp2[i]);
+                                        if (match) {
+                                            //There's a match, cut off the string before the first character of the match
+                                            t = match[0];
+                                            target = temp2[i].indexOf(t);
+                                            if (temp2[i].slice(0, target - 1) == "") {
+                                                //If this slice will make the curent string null, the array will shift and we have to clear from the shift position
+                                                var pos = temp2.length;
+
+                                                if (i != (pos - 1)) {
+                                                    for (j = i; j < temp2.length; j++) {
+                                                        temp2[j] = "";
+                                                    }
+                                                    //if its not the final item, clean the rest of the string from match point
+                                                } else {
+                                                    temp2[i] = temp2[i].slice(0, target - 1);
+
                                                 }
+
+                                            } else {
+                                                //If the slice doesn't make the current string null, clear the rest of the text
+                                                temp2[i] = temp2[i].slice(0, target - 1);
+
+                                                match = sigPattern.exec(temp2[i]);
+                                                if (match) {
+                                                    for (j = i; j < temp2.length; j++) {
+                                                        temp2[j] = "";
+                                                    }
+                                                    //If the slice is produced and there's still a match on this line, Remove entire line and rest. In cases where user has automatic signature block
+                                                }
+
+                                                for (j = i + 1; j < temp2.length; j++) {
+                                                    temp2[j] = "";
+                                                }
+
                                             }
-                                            //cut off before the first character of the match
+
+
                                         }
                                     }
-                                    body[h]=temp2.join(" ");
-                                    temp2=[]; 
+                                    body[h] = temp2.join(" ");
+                                    temp2 = [];
                                     //Rejoin the body together after signature is removed and recycle
                                 }
-                                const clean=/\*\*|\*/g;
+                                const clean = /\*\*|\*/g;
                                 for (k = 0; k < body.length; k++) {
-                                    body[k] = body[x].replace(clean, " ");
+                                    body[k] = body[k].replace(clean, " ");
                                 }
 
+                                var email = [];
                                 
-                            
+                                const ep=/\w+[.-]?\w+@\w+\.\w{2,3}/;
+                                //created a new email pattern: epattern has global tag, so it will remember last match of the text than restart from top
+                                //2.6 Retrieve creators  of every email found for email submissions 
+                                for(w=0; w<eThreads.length;w++){
+                                    match=ep.exec(eThreads[w]);
+                                    email.push(match[0]);
+                                }
 
-                                //2.6, Create the AJAX post with the email model in mind for the data section
 
+                                //2.9, Create the AJAX post with the email model in mind for the data section
+                               
+                                for(s=0;s<body.length;s++){
+                                    
+                                    $.ajax({
+                                        url: "/email",
+                                        method: "POST",
+                                        data:{
+                                            subject: subject[s],
+                                            receipient:participants[s],
+                                            body:body[s],
+                                            userId:email[s]
+                                        }
+
+                                    })
+                                    .done(function(){
+                                        console.log("email submission completed");
+                                    });
+                                }
+
+
+                                //3.0 send update request for their ID's and replace the string inside
 
                             } else {
                                 alert("The submission is too small for analysis: Try a longer submission");
