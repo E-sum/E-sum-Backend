@@ -7,7 +7,7 @@ const emailSchema = new Schema({
     required: false,
   },
   receipient: {
-    type: String,
+    type: [String],
     required: true,
   },
   body: {
