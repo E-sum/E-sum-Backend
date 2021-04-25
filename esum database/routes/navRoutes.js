@@ -35,11 +35,18 @@ router.get('/register', (req, res) => {
 router.get('/change-password', (req, res) => {
 	res.render('./nav/change-password', { title: 'Change Password' });
 });
+router.get('/adminLogin',(_req,res) => {
+	res.render('./nav/adminLogin', {title:'Admin Login'});
+});
 
 router.get('/logout', controller.logout);
 
 //post functionality for login
 router.post('/login', controller.login_post);
+<<<<<<< Updated upstream
+=======
+router.post('/adminLogin', controller.login_admin); //admins
+>>>>>>> Stashed changes
 
 //post functionality for creating an account
 router.post('/register', controller.register_post);

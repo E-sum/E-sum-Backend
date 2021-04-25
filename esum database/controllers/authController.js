@@ -37,6 +37,36 @@ exports.login_post = async (req, res) => {
     }
 	};
 
+<<<<<<< Updated upstream
+=======
+	exports.login_admin = async (req, res) => {
+		const { adminEmail, password } = req.body
+		try {
+			const admin = await Admin.findOne({ adminEmail }).lean()
+	
+			if (!admin) {
+				const errors = ('You are not an Administrator!');
+				res.status(400).json({ errors });
+			};
+			//replace with the following line if the passwords are encrypted
+			//const validPass = await bcrypt.compare(password, admin.password);
+			if (password !== admin.password) {
+				const errors = ('Incorrect Password')
+				res.status(400).json({ errors });
+			};  
+			const accessToken = createToken(admin._id);
+			res.cookie('jwt', accessToken, { maxAge: maxAge * 1000 });
+			console.log("IS THSI BEING READ?");
+			res.status(200).json({ admin: admin._id, token: accessToken })
+		}
+		catch (err) {
+			const errors = 'Something Went Wrong!'
+			res.status(400).json({ errors });
+		}
+		};
+	
+
+>>>>>>> Stashed changes
 exports.register_post = async (req, res) => {
 
 	const { userEmail, password, cpass } = req.body
