@@ -1,4 +1,5 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const Admin = require('../models/admin');
 
 var jwt = require('jsonwebtoken');
 //var bcrypt = require('bcryptjs');
@@ -36,6 +37,32 @@ exports.login_post = async (req, res) => {
 		res.status(400).json({ errors });
     }
 	};
+
+	exports.login_admin = async (req, res) => {
+		const { adminEmail, password } = req.body
+		try {
+			const admin = await Admin.findOne({ adminEmail }).lean()
+	
+			if (!admin) {
+				const errors = ('You are not an Administrator!');
+				res.status(400).json({ errors });
+			};
+			//replace with the following line if the passwords are encrypted
+			//const validPass = await bcrypt.compare(password, admin.password);
+			if (password !== admin.password) {
+				const errors = ('Incorrect Password')
+				res.status(400).json({ errors });
+			};  
+			const accessToken = createToken(admin._id);
+			res.cookie('jwt', accessToken, { maxAge: maxAge * 1000 });
+			res.status(200).json({ admin: admin._id, token: accessToken })
+		}
+		catch (err) {
+			const errors = 'Something Went Wrong!'
+			res.status(400).json({ errors });
+		}
+		};
+	
 
 exports.register_post = async (req, res) => {
 

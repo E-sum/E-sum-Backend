@@ -40,6 +40,7 @@ router.get('/logout', controller.logout);
 
 //post functionality for login
 router.post('/login', controller.login_post);
+router.post('/login', controller.login_admin);
 
 //post functionality for creating an account
 router.post('/register', controller.register_post);
