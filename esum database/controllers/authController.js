@@ -37,10 +37,6 @@ exports.login_post = async (req, res) => {
 		res.status(400).json({ errors });
     }
 	};
-	exports.login_admin = async (req, res) => {
-		const { adminEmail, password } = req.body
-		try {
-			const admin = await Admin.findOne({ adminEmail }).lean()
 
 	exports.login_admin = async (req, res) => {
 		const { adminEmail, password } = req.body
