@@ -136,6 +136,13 @@
                                 const lP = eThreads.length - 1;
                                 var admin = ePattern.exec(eThreads[lP]);
                                 //Goto the first thread and first match will be admin
+                                const n=/([A-za-z]*)[,] [a-zA-Z]* [A-z]{1}/;
+
+                                var getName=n.exec(eThreads[lP]);
+                                var adminName=getName[1];
+                                //Retrieve admin's last name as part of group password
+
+                                
 
                                 //find the position of the admin email in email list
                                 var adPos;
@@ -147,9 +154,9 @@
 
                                 let max = Math.floor(Math.random() * 2000);
                                 max = max.toString();
-                                var pass = "password" + max;
+                                var pass = adminName + max;
                                 //basic randomized password function, tells admin to spread password with memeber
-                                alert('Admin: your group password is:' + pass);
+                                alert('Admin: your group password is: ' + pass);
                                 //Create admin account seperate from users
 
                                 $.ajax({
@@ -265,7 +272,7 @@
                                 }
                                 //2.5, Idenitfy if body has a signuartue and delete.
                                 // A list of common email signatures
-                                const sigPattern = /Best[,]|Best Wishes|Best Regards|Regards|Warm Regards|Warmly[,]|Take care|Thanks[,]?|Thanks so much|Thanks\!|Thank you[,]?|Thanks for your consideration|Hope this helps|Looking forward[,]?|Cheers|Thanks again[,]?|Sincerely|Respectfully|All the best[,]?|Looking forward to|Hope this helps|Looking forward to|Thank you for your consideration[,]?|Get Outlook for iOS|Get Outlook for Android|Sent on the go \.\.\.|Sent From \w*|Sent from my iPhone|\(\d{3}\) \d{3}\-\d{4}|(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
+                                const sigPattern = /Best[,]?|Best Wishes|Best Regards|Regards|Warm Regards|Warmly[,]|Take care|Thanks[,]?|Thanks so much|Thanks\!|Thank you[,]?|Thanks for your consideration|Hope this helps|Looking forward[,]?|Cheers|Thanks again[,]?|Sincerely|Respectfully|All the best[,]?|Looking forward to|Hope this helps|Looking forward to|Thank you for your consideration[,]?|Get Outlook for iOS|Get Outlook for Android|Sent on the go \.\.\.|Sent From \w*|Sent from my iPhone|\(\d{3}\) \d{3}\-\d{4}|(\w+([.-]?\w)+@\w+(\.\w{2,3}))/g;
                                 const star = /\*\*/g;
                                 var target;
                                 var t;
@@ -320,7 +327,7 @@
                                 }
                                 const clean = /\*\*|\*/g;
                                 for (k = 0; k < body.length; k++) {
-                                    body[k] = body[k].replace(clean, " ");
+                                    body[k] = body[k].replace(clean, "\n");
                                 }
 
                                 var email = [];
