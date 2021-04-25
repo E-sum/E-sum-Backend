@@ -1,4 +1,5 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const Admin = require('../models/admin');
 
 var jwt = require('jsonwebtoken');
 //var bcrypt = require('bcryptjs');
@@ -41,6 +42,11 @@ exports.login_post = async (req, res) => {
 		try {
 			const admin = await Admin.findOne({ adminEmail }).lean()
 
+	exports.login_admin = async (req, res) => {
+		const { adminEmail, password } = req.body
+		try {
+			const admin = await Admin.findOne({ adminEmail }).lean()
+	
 			if (!admin) {
 				const errors = ('You are not an Administrator!');
 				res.status(400).json({ errors });
@@ -61,6 +67,8 @@ exports.login_post = async (req, res) => {
 		}
 		};
 		
+	
+
 exports.register_post = async (req, res) => {
 
 	const { userEmail, password, cpass } = req.body
