@@ -41,7 +41,7 @@ const email_delete = (req, res) => {
   const id = req.params.id;
   email.findByIdAndDelete(id)
     .then(result => {
-      res.json({ redirect: '/email' });
+      res.json({ redirect: '/email/index' });
     })
     .catch(err => {
       console.log(err);
