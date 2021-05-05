@@ -11,6 +11,7 @@
       <% email.forEach(email => { %>
         <a class="single" href="/email/<%= email._id %>">
           <h2 class="subject"><%= email.subject %></h2>
+          <h3 class= "Date"><%= email.date %></h3>
           <h3 class= "userId"><%= email.userId %></h3>
           <p class="receipient"><%= email.receipient %></p>
         </a>
