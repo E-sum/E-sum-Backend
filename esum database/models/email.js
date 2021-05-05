@@ -10,6 +10,10 @@ const emailSchema = new Schema({
     type: [String],
     required: true,
   },
+  date:{
+    type:String,
+    required:true
+  },
   body: {
     type: String,
     required: true
