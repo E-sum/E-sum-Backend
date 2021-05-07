@@ -3,9 +3,19 @@
 
 <body>
   <%- include("./partials/navDash.ejs") %>
-	<h2> Welcome to the Dashboard</h2>
-        <p> This is where you can view and upload your email threads and condense these into readable chats.
-        </p>   
-  <%- include("./partials/footer.ejs") %>
+  <% //this lets you grab the current user and splits off the @tag %>
+  <% var yuser = user.userEmail %>
+  <% if(yuser == null)  { yuser = user.adminEmail } %>
+  <% JSON.stringify(yuser); %>
+  <% userSplit = yuser.split("@",1)[0]; %>
+	<h2> Welcome Back, <%= userSplit %> </h2>
+        <p> Emails </p> 
+		<li> This is where you view the emails you have uploaded using ESUM.</li>
+		<p> New Email </p> 
+		<li> The New Email tab is where you can upload your email threads as text files.</li>  
+		<p> Logout </p>
+		<li> Logging out will return you to the Home screen.</li>
+		<li> You can also click on the ESUM logo in the top left to return Home and remain signed in.</li>
+ <%- include("./partials/footer.ejs") %>
 </body>
 </html>

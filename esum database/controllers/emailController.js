@@ -1,13 +1,27 @@
 const email = require('../models/email');
+var isAdmin = false;
 
 const email_index = (req, res) => {
-  email.find().sort({ createdAt: -1 })
-    .then(result => {
-      res.render('index', { email: result, title: 'All emails' });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    if (res.locals.user.userEmail == undefined) {
+        console.log('=> is admin: true');
+        isAdmin = true;
+    } else {
+        console.log('=> is admin: false');
+        isAdmin = false;
+    }
+    email.find().sort({ createdAt: -1 })
+        .then(result => {
+            //if not an admin load the user display
+            if (isAdmin == false) {
+                console.log('. . .loading user display. . .')
+                res.render('userDisplay', { adminEmail: req.user.adminEmail, userEmail: req.user.userEmail, email: result, title: 'All emails' });
+            }
+            if (isAdmin == true){
+                console.log('. . .loading admin display. . .');
+                res.render('adminDisplay', { adminEmail: req.user.adminEmail, userEmail: req.user.userEmail, email: result, title: 'All emails' })
+            }
+        })
+        .catch(err => { console.log(err);  });
 }
 
 const email_details = (req, res) => {

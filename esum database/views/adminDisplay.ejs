@@ -9,10 +9,14 @@
 
     <% if (email.length > 0) { %>
       <% email.forEach(email => { %>
+       <% //this lets you grab the sending user and splits off the @tag %>
+        <% var yuser = email.userId %>
+        <% JSON.stringify(yuser); %>
+        <% userSplit = yuser.split("@",1)[0]; %>
         <a class="single" href="/email/<%= email._id %>">
           <h2 class="subject"><%= email.subject %></h2>
           <h3 class= "Date"><%= email.date %></h3>
-          <h3 class= "userId"><%= email.userId %></h3>
+          <h3 class= "userId">From: <%= userSplit %></h3>
           <p class="receipient"><%= email.receipient %></p>
         </a>
       <% }) %>

@@ -6,7 +6,7 @@ var jwt = require('jsonwebtoken');
 //key used for encrpytion
 const JWT_SECRET = 'sdjkfh8923yhjdksbfma@#*(&@*!^#&@bhjb2qiuhesdbhjdsfg839ujkdhfjk';
 
-const maxAge = 3 * 24 * 60 * 60;
+const maxAge = 259200;
 const createToken = (id) => {
 	return jwt.sign({ id }, JWT_SECRET, {
 		expiresIn: maxAge
@@ -20,13 +20,13 @@ exports.login_post = async (req, res) => {
 
 		if (!user) {
 			const errors = ('No Account With This Email Exists');
-			res.status(400).json({ errors });
+			return res.status(400).json({ errors });
 		};
 		//replace with the following line if the passwords are encrypted
 		//const validPass = await bcrypt.compare(password, user.password);
 		if (password !== user.password) {
 			const errors = ('Incorrect Password')
-			res.status(400).json({ errors });
+			return res.status(400).json({ errors });
 		};  
 		const accessToken = createToken(user._id);
 		res.cookie('jwt', accessToken, { maxAge: maxAge * 1000 });
@@ -34,7 +34,7 @@ exports.login_post = async (req, res) => {
 	}
 	catch (err) {
 		const errors = 'Something Went Wrong!'
-		res.status(400).json({ errors });
+		return res.status(400).json({ errors });
     }
 	};
 
@@ -45,13 +45,13 @@ exports.login_post = async (req, res) => {
 	
 			if (!admin) {
 				const errors = ('You are not an Administrator!');
-				res.status(400).json({ errors });
+				return res.status(400).json({ errors });
 			};
 			//replace with the following line if the passwords are encrypted
 			//const validPass = await bcrypt.compare(password, admin.password);
 			if (password !== admin.password) {
 				const errors = ('Incorrect Password')
-				res.status(400).json({ errors });
+				return res.status(400).json({ errors });
 			};  
 			const accessToken = createToken(admin._id);
 			res.cookie('jwt', accessToken, { maxAge: maxAge * 1000 });
@@ -59,7 +59,7 @@ exports.login_post = async (req, res) => {
 		}
 		catch (err) {
 			const errors = 'Something Went Wrong!'
-			res.status(400).json({ errors });
+			return res.status(400).json({ errors });
 		}
 		};
 		
