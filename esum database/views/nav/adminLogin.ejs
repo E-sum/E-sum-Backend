@@ -5,13 +5,13 @@
         <h1>Admins log in here</h1>
 		<form id="adminlogin">
 			<label for="email" id="elabel">Email:</label>
-			<input type="text" autocomplete="off" id="adminEmail" placeholder="admin@albany.edu" required/>
+			<input type="text" id="adminEmail" placeholder="admin@albany.edu" required/>
 			<br>
 			<label for="password" id="plabel">Password:</label>
-			<input type="password" autocomplete="off" id="password" placeholder="Password" required/>
+			<input type="password"  id="password" placeholder="Password" required/>
 			<br>
 			<input type="submit" value="Login" />
-			<a href="./change-password" id ="ForgotPass" class="button">Forgot Your Password?</a>
+			<a href="./login" id ="login_redirect" class="button">Not An Admin? Login Here?</a>
 			<br>
 		</form>
 
@@ -30,7 +30,9 @@
 					console.log('Admin ID: ', data.admin)
 					console.log('Token:', data.token)
 					localStorage.setItem('token', data.token)
-					alert('Successfully Logged In!')
+					if (data.errors) {
+					alert(data.errors) }
+					else { alert('Successfully Logged In!'); }
 					if (data.admin) { window.location.replace('../dashboard') }
 			}
 		</script>

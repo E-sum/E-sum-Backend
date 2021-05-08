@@ -4,8 +4,8 @@ const controller = require('../controllers/authController');
 const verifyToken = require('../config/verifyToken');
 
 //protected route (user-authetication required)
-router.get('/dashboard', verifyToken, (req, res) => {
-	res.render('../views/dashboard')
+router.get('/dashboard', verifyToken.verifyToken, (req, res) => {
+	res.render('../views/dashboard', { adminEmail: req.user.adminEmail, userEmail: req.user.userEmail })
 });
 
 // routes
@@ -35,15 +35,15 @@ router.get('/register', (req, res) => {
 router.get('/change-password', (req, res) => {
 	res.render('./nav/change-password', { title: 'Change Password' });
 });
-router.get('/adminLogin',(_req,res) => {
-	res.render('./nav/adminLogin', {title:'Admin Login'});
+router.get('/adminLogin', (_req, res) => {
+	res.render('./nav/adminLogin', { title: 'Admin Login' });
 });
 
 router.get('/logout', controller.logout);
 
 //post functionality for login
 router.post('/login', controller.login_post);
-router.post('/adminLogin',controller.login_admin);
+router.post('/adminLogin', controller.login_admin);
 
 //post functionality for creating an account
 router.post('/register', controller.register_post);

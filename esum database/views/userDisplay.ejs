@@ -1,0 +1,34 @@
+<html lang="en">
+<%- include("./partials/head.ejs") %>
+
+<body>
+  <%- include("./partials/navDash.ejs") %>
+
+  <div class="email content">
+    <h2>All emails</h2>
+    <% var use = user.userEmail;%> 
+    <% if (use == null) { use = user.adminEmail } %>
+    <% if (email.length > 0) { %>
+      <% email.forEach(email => { %>
+      <%const rec = email.receipient %>
+        <% JSON.stringify(rec); %>
+        <% if (rec.includes(use)) { %>
+        <a class="single" href="/email/<%= email._id %>">
+          <h2 class="subject">Subject:  <%= email.subject %></h2>
+          <h3 class= "Date"><%= email.date %></h3>
+          <% const user = email.userId; %>
+          <% JSON.stringify(user) %>
+          <% userSplit = user.split("@",1)[0]; %>
+          <h3 class= "userId"> From: <%=userSplit; %></h3>    
+         <p class="receipient">  <%=email.receipient %></p>
+        </a>
+      <% }}) %>
+    <% } else { %> 
+      <p>There are no emails to display...</p>
+    <% } %>
+    
+  </div>
+
+  <%- include("./partials/footer.ejs") %>
+</body>
+</html>
