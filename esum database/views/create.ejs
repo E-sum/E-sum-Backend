@@ -210,7 +210,7 @@
                                 //Subject: [\s{1}\w-.:()/]{0,72}[^**]
                                 //Subject: [\s{1}\w-.:()/]{0,72}\s{1}
                                 //Subject: ((Re:)?(\w*[.?!@&*#$\s]?){0,77})* 
-                                const subPattern = /Subject: ([\s{1}\w\-.:()_#+\/]{0,72}[^**])|Subject: ([\s{1}\w\-.:()_#+]{0,72}) /g;
+                                const subPattern = /Subject: ([\s{1}\w\-.:'()_#+\/]{0,72}[^**])|Subject: ([\s{1}\w\-.:'()_#+]{0,72}) /g;
                                 var subject = [];
                                 var lastID = [];
                                 for (d = 0; d < eThreads.length; d++) {
