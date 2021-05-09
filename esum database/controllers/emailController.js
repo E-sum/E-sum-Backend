@@ -40,26 +40,34 @@ const email_create_get = (req, res) => {
   res.render('create', { title: 'Create a new email' });
 }
 
+var i = 0;
 const email_create_post = (req, res) => {
   const newEmail = new email(req.body);
   newEmail.save()
-    .then(result => {
-      res.redirect('/email');
+      .then(result => {
+          i = 1;
+          res.render('./nav/adminLogin', { title: 'Admin Login' });
     })
     .catch(err => {
       console.log(err);
     });
 }
+if (i = 1) { isAdmin = true; }
 
 const email_delete = (req, res) => {
-  const id = req.params.id;
-  email.findByIdAndDelete(id)
-    .then(result => {
-      res.json({ redirect: '/email/index' });
-    })
-    .catch(err => {
-      console.log(err);
-    });
+    const id = req.params.id;
+    if (isAdmin == true) {
+        email.findByIdAndDelete(id)
+            .then(result => {
+                res.json({ redirect: '/email/index' });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    } else {
+        const errors = 'You Must Be An Admin to Delete Email Threads'
+        console.log(errors)
+    };
 }
 
 module.exports = {
