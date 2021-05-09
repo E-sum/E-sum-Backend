@@ -7,7 +7,7 @@ const Admin = require('../models/admin');
 //possible to protect routes for the JWT cookie based authentication
 exports.verifyToken = (req, res, next) => {
 	const token = req.cookies.jwt;
-	if (!token) { return res.status(400).send('Must Be Logged In to Access'); };
+	if (!token) { return res.status(400).send('Sorry, You Must Be Logged In to Access This Content');};
 	try {
 		const verified = jwt.verify(token, JWT_SECRET);
 		req.user = verified;
@@ -32,8 +32,6 @@ exports.renderUser = (req, res, next) => {
 				res.locals.user = user;
 				next();
 			});
-		} catch (err) {
-			console.log('No Token Found')
-		}
+		} catch (err) { console.log('No Token Found') }
 	}
 };

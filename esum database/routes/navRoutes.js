@@ -26,8 +26,10 @@ router.get('/home', (req, res) => {
 });
 
 //log routes
-router.get('/login', (_req, res) => {
-	res.render('./nav/login', { title: 'Login' });
+router.get('/login', (req, res) => {
+	const token = req.cookies.jwt;
+	if (!token) { res.render('./nav/login', { title: 'Login' });
+	} else { res.render('dashboard'); }
 });
 router.get('/register', (req, res) => {
 	res.render('./nav/register', { title: 'Register' });
@@ -35,7 +37,7 @@ router.get('/register', (req, res) => {
 router.get('/change-password', (req, res) => {
 	res.render('./nav/change-password', { title: 'Change Password' });
 });
-router.get('/adminLogin', (_req, res) => {
+router.get('/adminLogin', (req, res) => {
 	res.render('./nav/adminLogin', { title: 'Admin Login' });
 });
 

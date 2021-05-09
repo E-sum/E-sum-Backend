@@ -19,7 +19,7 @@
 		</form>
 
 		<script>
-			const form = document.getElementById('reg-form')
+			const form = document.getElementByIzxd('reg-form')
 			form.addEventListener('submit', registerUser)
 
 			async function registerUser(event) {
@@ -41,8 +41,7 @@
 				}).then((res) => res.json())
 
 				if (result.status === 'ok') {
-					// everythign went fine
-					alert('Success')
+					alert('Account Sucessfully Created')
 					window.location.replace('/login')
 				} else {
 					alert(result.error)

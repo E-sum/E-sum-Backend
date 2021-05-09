@@ -18,18 +18,17 @@
                 </form> -->
 
                 <h2>New thread to analyze? </h2>
-                <p>
-                    Upload your Email file below
-
+                Upload your Email file below
                 <form id="file_sub">
                     <input type="file" name="orgEmail" accept=".txt">
                     <br>
                     <input type="submit" value="Upload">
                 </form>
-                <small>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a> </small>
-                </p>
-
-            </div>
+               <u> <small> Once you upload your email threads save the group password generated: </u>
+                <li>Distribute this password to the users of your uploaded email thread and they can login under their emails and view these chats as well!
+                <li>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a>
+                <li><a href="../adminLogin" id ="adminLogin" class="button">Login as Admin Here!</a> </small>        
+          </div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script>
                 $(document).ready(function () {
@@ -154,17 +153,16 @@
 
                                 let max = Math.floor(Math.random() * 2000);
                                 max = max.toString();
-                                var pass = adminName + max;
+                                var group_pass = adminName + max;
                                 //basic randomized password function, tells admin to spread password with memeber
-                                alert('Hello user: All emails listed in the file have their accounts created with the group password of: ' + pass+'\nPlease distribute this with the emails associated within the file');
+                                alert('Hello Admin: \nUser Accounts Have Been Generated! \nYour Group Password is: ' + group_pass+'\nPlease save and share this with the emails associated within the file');
                                 //Create admin account seperate from users
-
                                 $.ajax({
                                     url: "/admin",
                                     method: "POST",
                                     data: {
                                         adminEmail: emails[adPos],
-                                        password: pass
+                                        password: group_pass
                                     }
                                 }).done(function () {
                                     console.log("Admin " + emails[adPos] + "account is created");
@@ -176,7 +174,7 @@
                                             method: "POST",
                                             data: {
                                                 userEmail: emails[a],
-                                                password: pass
+                                                password: group_pass
                                             }
                                         })
                                             .done(function () {
@@ -366,7 +364,8 @@
                                             receipient:participants[s],
                                             date:date[s],
                                             body:body[s],
-                                            userId:email[s]
+                                            userId:email[s],
+                                            groupId: group_pass
                                         }
 
                                     })
@@ -375,7 +374,9 @@
                                        
                                     });
                                 }
-                                alert("Submission complete, Check Emails!");
+                 //this allows the user account whos posting to become logged in under their admin account without having to manually login
+                               if (window.confirm("Submission complete, Check Emails!")) { window.location.replace('../adminLogin'); }
+
                                 $.ajax({
                                     url: "/email/create",
                                     method: "GET",

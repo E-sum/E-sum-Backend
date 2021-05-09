@@ -22,7 +22,11 @@ const emailSchema = new Schema({
   userId: {
     type: String,
     required: true
-  }
+    },
+    groupId: {
+        type: String,
+        required: true
+    }
 }, { timestamps: true });
 
 const email = mongoose.model('email', emailSchema);

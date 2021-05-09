@@ -2,7 +2,7 @@
 <%- include("./partials/head.ejs") %>
 
 <body>
-  <%- include("./partials/nav.ejs") %>
+  <%- include("./partials/navDash.ejs") %>
 
   <div class="details content">
     <h2><%= email.subject %></h2>
@@ -14,12 +14,14 @@
       <img src="/trashcan.svg" alt="delete icon">
     </a>
   </div>
+  <br>
+     <h3>Group Id: <%= email.groupId %> </h3>
 
   <%- include("./partials/footer.ejs") %>
 
   <script>
     const trashcan = document.querySelector('a.delete');
-
+     var error = 0;
     trashcan.addEventListener('click', (e) => {
       const endpoint = `/email/${trashcan.dataset.doc}`;
 
@@ -28,7 +30,7 @@
       })
       .then(response => response.json())
       .then(data => window.location.href = data.redirect)
-      .catch(err => console.log(err));
+      .catch(err => console.log('You Must Be an Admin To Delete Threads'))
     });
     
   </script>
