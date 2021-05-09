@@ -252,13 +252,10 @@
                                         body.push(eThreads[f].slice(lastID[f] + 1,));
                                         //If subject is found: Just start from the last index to the end of the str
                                     } else {
-                                        //If subject isn't located, Search for a string bounded in ** 
-                                        match = bPattern.exec(eThreads[f]);
-                                        while (match) {
-                                            temp.push(match[1]);
-                                            match = bPattern.exec(eThreads[f]);
+                                        //If subject isn't located, Search for first instance of ** and cut from there (less greedy option) 
+                                             match=eThreads[f].indexOf("**");
+                                            temp.push(eThreads[f].slice(match,));
 
-                                        }
                                         if (temp.length == 1) {
                                             body.push(temp[0]);
                                         } else {
