@@ -1,8 +1,24 @@
 const monAdmin = require('../models/admin');
 
-const admin_create = (req, res) => {
+const admin_create = async (req, res) => {
     const adminEmail = req.body.adminEmail;
     const password = req.body.password;
+
+    let emailisTaken = false;
+
+    await monAdmin.find({adminEmail: adminEmail}).then(result => {
+        if(result.length > 0){
+        emailisTaken = true;
+        }
+    }).catch(err => {
+        console.log('error');
+        emailisTaken = true
+    })
+
+    if (emailisTaken) {
+        const response = JSON.stringify({adminEmail: 'taken'});
+        res.send(response);
+    }else{
 
     const newAdmin = new monAdmin({ adminEmail: adminEmail, password: password });
     newAdmin.save()
@@ -12,6 +28,7 @@ const admin_create = (req, res) => {
         .catch(error => {
             res.send(error);
         })
+    }
 }
 
 const admin_index = (req, res) => {
