@@ -14,6 +14,8 @@
       <img src="/trashcan.svg" alt="delete icon">
     </a>
   </div>
+  <br>
+     <h3>Group Id: <%= email.groupId %> </h3>
 
   <%- include("./partials/footer.ejs") %>
 
@@ -28,7 +30,7 @@
       })
       .then(response => response.json())
       .then(data => window.location.href = data.redirect)
-      .catch(err => console.log(err))
+      .catch(err => console.log('You Must Be an Admin To Delete Threads'))
     });
     
   </script>

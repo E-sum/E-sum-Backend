@@ -26,8 +26,9 @@
                 </form>
                <u> <small> Once you upload your email threads save the group password generated: </u>
                 <li>Distribute this password to the users of your uploaded email thread and they can login under their emails and view these chats as well!
-                <li>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a> </small>
-            </div>
+                <li>How to transfer your email log to a file? Check our <a href="/faq">FAQ</a>
+                <li><a href="../adminLogin" id ="adminLogin" class="button">Login as Admin Here!</a> </small>        
+          </div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
             <script>
                 $(document).ready(function () {
@@ -156,7 +157,6 @@
                                 //basic randomized password function, tells admin to spread password with memeber
                                 alert('Hello Admin: \nUser Accounts Have Been Generated! \nYour Group Password is: ' + group_pass+'\nPlease save and share this with the emails associated within the file');
                                 //Create admin account seperate from users
-
                                 $.ajax({
                                     url: "/admin",
                                     method: "POST",

@@ -38,9 +38,7 @@ router.get('/change-password', (req, res) => {
 	res.render('./nav/change-password', { title: 'Change Password' });
 });
 router.get('/adminLogin', (req, res) => {
-	const token = req.cookies.jwt;
-	if (!token) { res.render('./nav/adminLogin', { title: 'Admin Login' }); }
-	else { res.render('dashboard'); }
+	res.render('./nav/adminLogin', { title: 'Admin Login' });
 });
 
 router.get('/logout', controller.logout);
